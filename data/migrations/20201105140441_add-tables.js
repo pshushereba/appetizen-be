@@ -26,9 +26,19 @@ exports.up = function (knex) {
         .inTable("users")
         .onDelete("CASCADE")
         .onUpdate("CASCADE");
+    })
+    .createTable("profiles", (tbl) => {
+      tbl.increments();
+      tbl.string("location", 255);
+      tbl.string("bio", 255);
+      tbl.integer("subscribers");
+      tbl.string("website_url", 255);
     });
 };
 
 exports.down = function (knex) {
-  return knex.schema.dropTableIfExists("accounts").dropTableIfExists("users");
+  return knex.schema
+    .dropTableIfExists("profiles")
+    .dropTableIfExists("accounts")
+    .dropTableIfExists("users");
 };
