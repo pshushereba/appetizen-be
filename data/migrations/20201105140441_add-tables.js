@@ -33,6 +33,16 @@ exports.up = function (knex) {
       tbl.string("bio", 255);
       tbl.integer("subscribers");
       tbl.string("website_url", 255);
+      tbl.string("header_img", 255);
+      tbl.string("profile_img", 255);
+      tbl
+        .integer("user_id")
+        .unsigned()
+        .notNullable()
+        .references("id")
+        .inTable("users")
+        .onDelete("CASCADE")
+        .onUpdate("CASCADE");
     });
 };
 
