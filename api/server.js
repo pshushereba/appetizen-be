@@ -4,6 +4,8 @@ const helmet = require("helmet");
 
 // Routers and Middleware
 const authRouter = require("../auth/auth-router.js");
+const accountRouter = require("../accounts/accounts-router.js");
+const profileRouter = require("../profiles/profiles-router.js");
 
 const server = express();
 
@@ -12,6 +14,8 @@ server.use(helmet());
 server.use(express.json());
 
 server.use("/api/auth", authRouter);
+server.use("/api/accounts", accountRouter);
+server.use("/api/profiles", profileRouter);
 
 server.get("/", (req, res) => {
   res.send("<h1>Appetizen</h1>");
