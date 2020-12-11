@@ -8,6 +8,10 @@ function findByUsername(username) {
   return db("users").where({ username }).first();
 }
 
+function searchByUsername(username) {
+  return db("users").where("username", "like", `%${username}%`);
+}
+
 function findBy(filter) {
   return db("users").where(filter);
 }
@@ -36,6 +40,7 @@ module.exports = {
   findById,
   findBy,
   findByUsername,
+  searchByUsername,
   add,
   updateUser,
   deleteUser,

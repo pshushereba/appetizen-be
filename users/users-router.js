@@ -3,6 +3,19 @@ const router = express.Router();
 
 const Users = require("./users-model.js");
 
+router.get("/search/:user", (req, res) => {
+  const { query } = req.query;
+  Users.searchByUsername(query)
+    .then((users) => {
+      res.status(200).json(users);
+    })
+    .catch((err) => {
+      res
+        .status(500)
+        .json({ message: "There was an error completing the search." });
+    });
+});
+
 router.get("/:id", (req, res) => {
   const { id } = req.params;
 
