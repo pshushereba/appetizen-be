@@ -3,6 +3,16 @@ const router = express.Router();
 
 const Users = require("./users-model.js");
 
+const nanoId = require("nanoid");
+const multer = require("multer");
+const multerS3 = require("multer-s3");
+const AWS = require("aws-sdk");
+
+AWS.config.update({
+  accessKeyId: process.env.AWS_ACCESS_KEY_ID,
+  secretAccessKey: process.env.AWS_SECRET_ACCESS,
+});
+
 router.get("/search/:user", (req, res) => {
   const { query } = req.query;
   Users.searchByUsername(query)
@@ -57,6 +67,16 @@ router.delete("/:id", (req, res) => {
       console.log(err);
       res.status(500).json(err);
     });
+});
+
+// Add profile picture to user
+
+router.post("/:id/photo", upload.single("photo", 1), (req, res) => {
+  const { id } = req.params;
+
+  // Something with a newPhoto object
+
+  // Need to make a call to a model to add the photo to the database.
 });
 
 module.exports = router;

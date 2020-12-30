@@ -6,6 +6,8 @@ exports.up = function (knex) {
       tbl.string("password", 255).notNullable();
       tbl.string("name", 255).notNullable();
       tbl.string("email", 255).unique().notNullable();
+      tbl.string("avatar_img", 255);
+      tbl.string("role", 10).notNullable();
     })
     .createTable("accounts", (tbl) => {
       tbl.increments();
