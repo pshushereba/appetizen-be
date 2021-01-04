@@ -13,6 +13,16 @@ AWS.config.update({
   secretAccessKey: process.env.AWS_SECRET_ACCESS,
 });
 
+const s3 = new AWS.S3();
+
+const upload = multer({
+  storage: multerS3({
+    s3: s3,
+    bucket: process.env.AWS_S3_BUCKET,
+    acl: "public-read",
+  }),
+});
+
 router.get("/search/:user", (req, res) => {
   const { query } = req.query;
   Users.searchByUsername(query)
