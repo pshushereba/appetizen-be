@@ -8,20 +8,24 @@ const multer = require("multer");
 const multerS3 = require("multer-s3");
 const AWS = require("aws-sdk");
 
-// AWS.config.update({
-//   accessKeyId: process.env.AWS_ACCESS_KEY_ID,
-//   secretAccessKey: process.env.AWS_SECRET_ACCESS,
-// });
+AWS.config.update({
+  accessKeyId: process.env.AWS_ACCESS_KEY_ID,
+  secretAccessKey: process.env.AWS_SECRET_ACCESS,
+});
 
-// const s3 = new AWS.S3();
+const s3 = new AWS.S3();
 
-// const upload = multer({
-//   storage: multerS3({
-//     s3: s3,
-//     bucket: process.env.AWS_S3_BUCKET,
-//     acl: "public-read",
-//   }),
-// });
+const upload = multer({
+  storage: multerS3({
+    s3: s3,
+    bucket: process.env.AWS_S3_BUCKET,
+    acl: "public-read",
+    key: function (req, file, cb) {
+      const extension = file.memetype.replace(/image\//g, "");
+      cb(null, `/photos/appetizen-${nanoId()}.${extension}`);
+    },
+  }),
+});
 
 router.get("/search/:user", (req, res) => {
   const { query } = req.query;
@@ -79,14 +83,17 @@ router.delete("/:id", (req, res) => {
     });
 });
 
-// Add profile picture to user
+//Add profile picture to user
 
-// router.post("/:id/photo", upload.single("photo", 1), (req, res) => {
-//   const { id } = req.params;
+router.post("/:id/photo", upload.single("photo", 1), (req, res) => {
+  const { id } = req.params;
 
-// Something with a newPhoto object
+  const newPhoto = {
+    avatar: req.files[0].key,
+  };
+  console.log(res);
 
-// Need to make a call to a model to add the photo to the database.
-//});
+  //Need to make a call to a model to add the photo to the database.
+});
 
 module.exports = router;
