@@ -92,7 +92,7 @@ router.post("/:id/photo", (req, res) => {
     avatar: req.files[0].key,
   };
   console.log(newPhoto);
-
+  res.send(201);
   //Need to make a call to a model to add the photo to the database.
 });
 
