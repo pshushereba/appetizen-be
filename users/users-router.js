@@ -84,20 +84,23 @@ router.delete("/:id", (req, res) => {
     });
 });
 
-//Add profile picture to user
-// upload.single("photo", 1),
+// Add profile picture to user
 
 router.post("/:id/photo", upload.single("photo", 1), (req, res) => {
   const { id } = req.params;
   console.log(req);
   // console.log(req.body);
-  const newPhoto = {
-    avatar: req.file.photo,
-  };
-  console.log(newPhoto);
-
-  //Need to make a call to a model to add the photo to the database.
-  res.status(201);
+  const newPhoto = req.file.location;
+  console.log("newPhoto", newPhoto);
+  Users.updateUserAvatar(id, newPhoto)
+    .then((photoLink) => {
+      console.log(photoLink);
+      res.status(201).json({ photoLink });
+    })
+    .catch((err) => {
+      console.error(err);
+      res.status(500).json(err);
+    });
 });
 
 module.exports = router;

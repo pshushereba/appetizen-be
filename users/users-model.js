@@ -31,9 +31,13 @@ async function updateUser(id, changes) {
 }
 
 async function updateUserAvatar(id, photo) {
-  await db("users").where({ id }).update({
-    avatar_img: photo,
-  });
+  console.log("in updateUserAvatar", id, photo);
+  return db("users")
+    .where({ id })
+    .update("avatar_img", photo, ["id", "avatar_img"]);
+
+  // const changedUser = await findById(id);
+  // return changedUser;
 }
 
 async function deleteUser(id) {
