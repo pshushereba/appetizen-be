@@ -30,6 +30,12 @@ async function updateUser(id, changes) {
   return changedUser;
 }
 
+async function updateUserAvatar(id, photo) {
+  await db("users").where({ id }).update({
+    avatar_img: photo,
+  });
+}
+
 async function deleteUser(id) {
   const deleted = await db("users").where({ id }).del();
 
@@ -44,4 +50,5 @@ module.exports = {
   add,
   updateUser,
   deleteUser,
+  updateUserAvatar,
 };

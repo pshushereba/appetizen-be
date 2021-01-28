@@ -3,7 +3,7 @@ const router = express.Router();
 
 const Users = require("./users-model.js");
 
-const nanoId = require("nanoid");
+const { nanoid } = require("nanoid");
 const multer = require("multer");
 const multerS3 = require("multer-s3");
 const AWS = require("aws-sdk");
@@ -14,6 +14,7 @@ AWS.config.update({
 });
 
 const s3 = new AWS.S3();
+//const upload = multer({ dest: "uploads/" });
 
 const upload = multer({
   storage: multerS3({
@@ -21,8 +22,8 @@ const upload = multer({
     bucket: process.env.AWS_S3_BUCKET,
     acl: "public-read",
     key: function (req, file, cb) {
-      const extension = file.memetype.replace(/image\//g, "");
-      cb(null, `/photos/appetizen-${nanoId()}.${extension}`);
+      const extension = file.mimetype.replace(/image\//g, "");
+      cb(null, `photos/appetizen-${nanoid()}.${extension}`);
     },
   }),
 });
@@ -85,15 +86,18 @@ router.delete("/:id", (req, res) => {
 
 //Add profile picture to user
 // upload.single("photo", 1),
-router.post("/:id/photo", (req, res) => {
-  const { id } = req.params;
 
+router.post("/:id/photo", upload.single("photo", 1), (req, res) => {
+  const { id } = req.params;
+  console.log(req);
+  // console.log(req.body);
   const newPhoto = {
-    avatar: req.files[0].key,
+    avatar: req.file.photo,
   };
   console.log(newPhoto);
-  res.send(201);
+
   //Need to make a call to a model to add the photo to the database.
+  res.status(201);
 });
 
 module.exports = router;
