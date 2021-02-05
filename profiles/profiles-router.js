@@ -54,4 +54,30 @@ router.put("/:id", (req, res) => {
     });
 });
 
+router.get("/events", (req, res) => {
+  res.setHeader("Cache-Control", "no-cache");
+  res.setHeader("Content-Type", "text/event-stream");
+  res.setHeader("Access-Control-Allow-Origin", "*");
+  res.setHeader("Connection", "keep-alive");
+  res.flushHeaders(); // flush the headers to establish SSE with client
+
+  let counter = 0;
+  let intervalID = setInterval(() => {
+    counter++;
+    if (counter >= 10) {
+      clearInterval(intervalID);
+      res.end();
+      return;
+    }
+    res.write(`data: ${JSON.stringify({ num: counter })}\n\n`); // res.write() instead of res.send() to avoid terminating the connection.
+  }, 1000);
+
+  // If client closes the connection, stop sending events
+  res.on("close", () => {
+    console.log("Connection terminated");
+    clearInterval(intervalID);
+    res.end();
+  });
+});
+
 module.exports = router;
