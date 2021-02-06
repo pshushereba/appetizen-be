@@ -54,7 +54,7 @@ router.put("/:id", (req, res) => {
     });
 });
 
-router.get("/events", (req, res) => {
+router.get("/events/:id", (req, res) => {
   res.setHeader("Cache-Control", "no-cache");
   res.setHeader("Content-Type", "text/event-stream");
   res.setHeader("Access-Control-Allow-Origin", "*");
