@@ -4,21 +4,19 @@ exports.up = function (knex) {
       tbl.increments();
       tbl.string("username", 255).notNullable();
       tbl.string("password", 255).notNullable();
-      tbl.string("name", 255).notNullable();
+      tbl.string("first_name", 255).notNullable();
+      tbl.string("last_name", 255).notNullable();
       tbl.string("email", 255).unique().notNullable();
       tbl.string("avatar_img", 255);
       tbl.string("role", 10).notNullable();
     })
     .createTable("accounts", (tbl) => {
       tbl.increments();
-      tbl.string("first_name", 255);
-      tbl.string("last_name", 255);
       tbl.string("address", 255);
       tbl.string("address2", 255);
       tbl.string("city", 255);
       tbl.string("state", 255);
       tbl.string("zip", 255);
-      tbl.string("subscribers", 255);
       tbl.string("videos", 255);
       tbl
         .integer("user_id")

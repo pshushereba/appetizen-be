@@ -64,7 +64,7 @@ router.get("/events/:id", (req, res) => {
   let counter = 0;
   let intervalID = setInterval(() => {
     counter++;
-    if (counter >= 10) {
+    if (counter >= 100) {
       clearInterval(intervalID);
       res.end();
       return;
