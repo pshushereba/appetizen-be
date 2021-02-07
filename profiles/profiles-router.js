@@ -54,6 +54,20 @@ router.put("/:id", (req, res) => {
     });
 });
 
+router.put("/:username/subscribe", (req, res) => {
+  const { username } = req.params;
+
+  Profiles.subscribeToUser(username)
+    .then((profile) => {
+      console.log(profile);
+      res.status(201).json(profile);
+    })
+    .catch((err) => {
+      console.error(err);
+      res.status(500).json({ message: err });
+    });
+});
+
 router.get("/events/:id", (req, res) => {
   res.setHeader("Cache-Control", "no-cache");
   res.setHeader("Content-Type", "text/event-stream");

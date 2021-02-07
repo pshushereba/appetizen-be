@@ -21,9 +21,23 @@ async function updateProfile(id, changes) {
   return changedProfile;
 }
 
+async function subscribeToUser(username) {
+  const user = db("users").where({ username }).first();
+  console.log("user", user);
+  const user_profile = db("profiles").where({ id: user.id }).first();
+  console.log("user_profile", user_profile);
+
+  const subscriber_count = { subscribers: user_profile.subscribers++ };
+  await db("profiles").where({ id: user.id }).update(subscriber_count);
+
+  const updatedProfile = await findByProfileId(user.id);
+  return updatedProfile;
+}
+
 module.exports = {
   findByUserId,
   add,
   findByProfileId,
   updateProfile,
+  subscribeToUser,
 };
