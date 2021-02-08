@@ -14,7 +14,6 @@ AWS.config.update({
 });
 
 const s3 = new AWS.S3();
-//const upload = multer({ dest: "uploads/" });
 
 const upload = multer({
   storage: multerS3({
@@ -101,6 +100,46 @@ router.post("/:id/photo", upload.single("photo", 1), (req, res) => {
       console.error(err);
       res.status(500).json(err);
     });
+});
+
+router.put("/:username/subscribe", (req, res) => {
+  const { username } = req.params;
+
+  Profiles.subscribeToUser(username)
+    .then((profile) => {
+      console.log(profile);
+      res.status(201).json(profile);
+    })
+    .catch((err) => {
+      console.error(err);
+      res.status(500).json({ message: err });
+    });
+});
+
+router.get("/events/:id", (req, res) => {
+  res.setHeader("Cache-Control", "no-cache");
+  res.setHeader("Content-Type", "text/event-stream");
+  res.setHeader("Access-Control-Allow-Origin", "*");
+  res.setHeader("Connection", "keep-alive");
+  res.flushHeaders(); // flush the headers to establish SSE with client
+
+  let counter = 0;
+  let intervalID = setInterval(() => {
+    counter++;
+    if (counter >= 100) {
+      clearInterval(intervalID);
+      res.end();
+      return;
+    }
+    res.write(`data: ${JSON.stringify({ num: counter })}\n\n`); // res.write() instead of res.send() to avoid terminating the connection.
+  }, 1000);
+
+  // If client closes the connection, stop sending events
+  res.on("close", () => {
+    console.log("Connection terminated");
+    clearInterval(intervalID);
+    res.end();
+  });
 });
 
 module.exports = router;
