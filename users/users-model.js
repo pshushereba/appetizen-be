@@ -46,6 +46,8 @@ async function deleteUser(id) {
   return deleted;
 }
 
+async function subscribeToUser(creator_id, subscriber_id) {}
+
 module.exports = {
   findById,
   findBy,
