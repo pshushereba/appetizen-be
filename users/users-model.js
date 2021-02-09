@@ -46,6 +46,10 @@ async function deleteUser(id) {
   return deleted;
 }
 
+async function getAllUsers() {
+  return await db("users").select();
+}
+
 function countSubscribers(id) {
   result = db("subscribers").count("creator_id").where({ creator_id: id });
   return result;
@@ -73,4 +77,5 @@ module.exports = {
   updateUserAvatar,
   subscribeToUser,
   countSubscribers,
+  getAllUsers,
 };
