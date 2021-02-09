@@ -46,7 +46,21 @@ async function deleteUser(id) {
   return deleted;
 }
 
-async function subscribeToUser(creator_id, subscriber_id) {}
+function countSubscribers(id) {
+  result = db("subscribers").count("creator_id").where({ creator_id: id });
+  return result;
+}
+
+async function subscribeToUser(creator_id, subscriber_id) {
+  const connection = {
+    creator_id: creator_id,
+    subscriber_id: subscriber_id,
+  };
+  // Will need to prevent subscribing multiple times.
+  await db("subscribers").insert(connection);
+
+  return countSubscribers(creator_id);
+}
 
 module.exports = {
   findById,
@@ -57,4 +71,6 @@ module.exports = {
   updateUser,
   deleteUser,
   updateUserAvatar,
+  subscribeToUser,
+  countSubscribers,
 };

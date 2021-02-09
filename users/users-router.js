@@ -102,13 +102,15 @@ router.post("/:id/photo", upload.single("photo", 1), (req, res) => {
     });
 });
 
-router.put("/:username/subscribe", (req, res) => {
-  const { username } = req.params;
+router.post("/:username/subscribe", (req, res) => {
+  // const { username } = req.params;
+  const subscriber = req.body.subscriber;
+  const creator = req.body.creator;
 
-  Profiles.subscribeToUser(username)
-    .then((profile) => {
-      console.log(profile);
-      res.status(201).json(profile);
+  Users.subscribeToUser(creator, subscriber)
+    .then((result) => {
+      console.log(result[0]);
+      res.status(201).json(result[0]);
     })
     .catch((err) => {
       console.error(err);
@@ -122,17 +124,25 @@ router.get("/events/:id", (req, res) => {
   res.setHeader("Access-Control-Allow-Origin", "*");
   res.setHeader("Connection", "keep-alive");
   res.flushHeaders(); // flush the headers to establish SSE with client
-
+  const { id } = req.params;
   let counter = 0;
   let intervalID = setInterval(() => {
-    counter++;
-    if (counter >= 100) {
-      clearInterval(intervalID);
-      res.end();
-      return;
-    }
-    res.write(`data: ${JSON.stringify({ num: counter })}\n\n`); // res.write() instead of res.send() to avoid terminating the connection.
-  }, 1000);
+    // counter++;
+    // if (counter >= 100) {
+    //   clearInterval(intervalID);
+    //   res.end();
+    //   return;
+    // }
+    const current_subs = Users.countSubscribers(id)
+      .then((result) => {
+        res.write(`data: ${JSON.stringify({ subscribers: result[0] })}\n\n`);
+      })
+      .catch((err) => {
+        console.error(err);
+      });
+
+    // res.write() instead of res.send() to avoid terminating the connection.
+  }, 3000);
 
   // If client closes the connection, stop sending events
   res.on("close", () => {
