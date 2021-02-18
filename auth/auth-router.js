@@ -1,8 +1,8 @@
+const crypto = require("crypto");
 const express = require("express");
 const router = express.Router();
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
-// const secrets = require("../config/secrets.js");
 
 const Users = require("../users/users-model.js");
 
@@ -64,6 +64,24 @@ router.post("/login", (req, res) => {
     .catch((err) => {
       res.status(500).json(err);
     });
+});
+
+router.post("/forgotPassword", (req, res) => {
+  if (req.body.email === "") {
+    res.status(400).json({ message: "Please provide a valid email address" });
+  }
+
+  Users.findBy(req.body.email)
+    .then((user) => {
+      if (user) {
+        const token = crypto.randomBytes(20).toString("hex");
+        Users.updateUser({
+          reset_password_token: token,
+          reset_password_expires: Date.now() + 36000,
+        });
+      }
+    })
+    .catch((err) => {});
 });
 
 function generateToken(user) {

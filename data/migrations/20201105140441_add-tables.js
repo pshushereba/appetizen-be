@@ -20,6 +20,8 @@ exports.up = function (knex) {
       tbl.integer("subscribers");
       tbl.string("website_url", 255);
       tbl.string("header_img", 255);
+      tbl.string("reset_password_token", 255);
+      tbl.integer("reset_password_expires");
     })
     .createTable("subscribers", (tbl) => {
       tbl.increments();

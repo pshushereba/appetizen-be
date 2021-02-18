@@ -135,31 +135,28 @@ router.get("/events/:id", (req, res) => {
   res.setHeader("Connection", "keep-alive");
   res.flushHeaders(); // flush the headers to establish SSE with client
   const { id } = req.params;
-  let counter = 0;
-  let intervalID = setInterval(() => {
-    // counter++;
-    // if (counter >= 100) {
-    //   clearInterval(intervalID);
-    //   res.end();
-    //   return;
-    // }
-    const current_subs = Users.countSubscribers(id)
-      .then((result) => {
-        res.write(`data: ${JSON.stringify({ subscribers: result[0] })}\n\n`);
-      })
-      .catch((err) => {
-        console.error(err);
-      });
+  try {
+    let intervalID = setInterval(() => {
+      const current_subs = Users.countSubscribers(id)
+        .then((result) => {
+          res.write(`data: ${JSON.stringify({ subscribers: result[0] })}\n\n`);
+        })
+        .catch((err) => {
+          console.error(err);
+        });
 
-    // res.write() instead of res.send() to avoid terminating the connection.
-  }, 3000);
+      // res.write() instead of res.send() to avoid terminating the connection.
+    }, 3000);
 
-  // If client closes the connection, stop sending events
-  res.on("close", () => {
-    console.log("Connection terminated");
-    clearInterval(intervalID);
-    res.end();
-  });
+    // If client closes the connection, stop sending events
+    res.on("close", () => {
+      console.log("Connection terminated");
+      clearInterval(intervalID);
+      res.end();
+    });
+  } catch (err) {
+    console.error("I'm going to break.", err);
+  }
 });
 
 module.exports = router;

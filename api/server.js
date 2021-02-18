@@ -19,8 +19,6 @@ server.use(helmet());
 server.use(express.json());
 
 server.use("/api/auth", authRouter);
-//server.use("/api/accounts", accountRouter);
-//server.use("/api/profiles", profileRouter);
 server.use("/api/users", userRouter);
 server.use("/api/newsletter", newsletterRouter);
 
