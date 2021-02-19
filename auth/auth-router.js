@@ -67,21 +67,37 @@ router.post("/login", (req, res) => {
 });
 
 router.post("/forgotPassword", (req, res) => {
+  const email = req.body.email;
   if (req.body.email === "") {
     res.status(400).json({ message: "Please provide a valid email address" });
   }
 
-  Users.findBy(req.body.email)
-    .then((user) => {
-      if (user) {
-        const token = crypto.randomBytes(20).toString("hex");
-        Users.updateUser({
-          reset_password_token: token,
-          reset_password_expires: Date.now() + 36000,
+  Users.findBy({ email })
+    .first()
+    .then((userRecord) => {
+      console.log("found userRecord", userRecord);
+      const token = crypto.randomBytes(20).toString("hex");
+      Users.updateResetPasswordToken(userRecord.id, {
+        reset_password_token: token,
+        reset_password_expires: parseInt(new Date().getTime() / 1000) + 36000,
+      })
+        .then((userRecordWithToken) => {
+          console.log(userRecordWithToken);
+          res.status(201).json(userRecordWithToken);
+        })
+        .catch((err) => {
+          console.error(err);
+          res.status(500).json({
+            message: "There was an error adding a password reset token.",
+          });
         });
-      }
     })
-    .catch((err) => {});
+    .catch((err) => {
+      console.error(err);
+      res.status(403).json({
+        message: "Could not find a user with that email in the database",
+      });
+    });
 });
 
 function generateToken(user) {

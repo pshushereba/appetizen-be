@@ -26,8 +26,19 @@ async function updateUser(id, changes) {
   await db("users").where({ id }).update(changes);
 
   const changedUser = await findById(id);
-
   return changedUser;
+}
+
+async function updateResetPasswordToken(id, changes) {
+  console.log("passed in params", id, changes);
+  await db("users").where({ id }).update({
+    reset_password_token: changes.reset_password_token,
+    reset_password_expires: changes.reset_password_expires,
+  });
+
+  const userRecordWithToken = await findById(id);
+  console.log(userRecordWithToken);
+  return userRecordWithToken;
 }
 
 async function updateUserAvatar(id, photo) {
@@ -35,9 +46,6 @@ async function updateUserAvatar(id, photo) {
   return db("users")
     .where({ id })
     .update("avatar_img", photo, ["id", "avatar_img"]);
-
-  // const changedUser = await findById(id);
-  // return changedUser;
 }
 
 async function deleteUser(id) {
@@ -78,4 +86,5 @@ module.exports = {
   subscribeToUser,
   countSubscribers,
   getAllUsers,
+  updateResetPasswordToken,
 };
