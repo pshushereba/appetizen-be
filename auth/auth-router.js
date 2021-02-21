@@ -3,6 +3,7 @@ const express = require("express");
 const router = express.Router();
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
+const nodemailer = require("nodemailer");
 
 const Users = require("../users/users-model.js");
 
@@ -79,10 +80,20 @@ router.post("/forgotPassword", (req, res) => {
       const token = crypto.randomBytes(20).toString("hex");
       Users.updateResetPasswordToken(userRecord.id, {
         reset_password_token: token,
-        reset_password_expires: parseInt(new Date().getTime() / 1000) + 36000,
+        reset_password_expires: parseInt(new Date().getTime() / 1000) + 3600000,
       })
         .then((userRecordWithToken) => {
           console.log(userRecordWithToken);
+
+          const transport = nodemailer.createTransport({
+            host: "smtp.gmail.com",
+            port: 465,
+            secure: true,
+            auth: {
+              type: "OAuth2",
+              email: process.env.EMAIL_ADDRESS,
+            },
+          });
           res.status(201).json(userRecordWithToken);
         })
         .catch((err) => {
